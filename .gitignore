@@ -1,0 +1,16 @@
+# dependencies
+src/ui/node_modules
+
+# testing
+src/ui/coverage
+
+# next.js
+src/ui/.next/
+src/ui/out/
+
+# production
+src/ui/build
+
+# debug
+**/*.log*
+**/yarn.lock

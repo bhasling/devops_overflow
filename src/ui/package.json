@@ -1,0 +1,36 @@
+{
+  "name": "next_demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/material": "^5.0.3",
+    "express": "^4.17.1",
+    "extracted-loader": "^1.0.7",
+    "file-loader": "^6.2.0",
+    "ignore-loader": "^0.1.2",
+    "img-loader": "^4.0.0",
+    "next": "11.1.2",
+    "next-compose-plugins": "^2.2.1",
+    "next-optimized-images": "^2.6.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-fab": "^1.2.0",
+    "react-redux": "^7.2.4",
+    "react-uuid": "^1.0.2",
+    "redux": "^4.1.1",
+    "url-loader": "^4.1.1"
+  },
+  "devDependencies": {
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.1.2"
+  }
+}
