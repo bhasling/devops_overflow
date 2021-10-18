@@ -8,7 +8,8 @@ import Head from 'next/head'
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
-import Typography from '@mui/material/Typography';
+import RestCall from '../../components/RestCall.js';
+
 import NavBar from '../../components/NavBar.js';
 import Link from 'next/link';
 import TextField from '@mui/material/TextField';
@@ -57,7 +58,7 @@ class Home extends Component {
                 </Head>
                 <NavBar/>
                 <center>
-                    <Link href="/">
+                    <Link href="/" passHref>
                         <IconButton style={{'verticalAlign': 'top', 'marginRight': '10px'}} color='primary'>
                             <Icon style={{'fontSize':'2rem'}}>home</Icon>
                         </IconButton>
@@ -67,7 +68,7 @@ class Home extends Component {
                         <TextField  style={formEntryStyle} label={'Issue Name'} required = {true} varient='Outlined'></TextField>
                         <TextField  style={formEntryStyle} label={'Product'} select required={true} varient='Outlined'>
                             {products.map((option) => (
-                                <MenuItem key={option.value} key={option.value}>
+                                <MenuItem key={option.value}>
                                     {option.label}
                                 </MenuItem>
                             ))}

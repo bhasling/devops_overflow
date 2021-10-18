@@ -7,6 +7,7 @@ import Head from 'next/head'
 import Typography from '@mui/material/Typography';
 import NavBar from '../components/NavBar.js';
 import LinkCard from '../components/LinkCard.js';
+import Image from 'next/image';
 
 export default function Home() {
   const cardContainerStyle = {
@@ -30,7 +31,7 @@ export default function Home() {
     'padding': '0 0.5rem',
     'display' : 'flex',
     'flexDirection': 'column',
-    'justisfyContent': 'center',
+    'justifyContent': 'center',
     'alignItems': 'center',
     'height':'100vh'
 }
@@ -52,7 +53,6 @@ export default function Home() {
     'alignItems': 'center'
   }
 
-
   return (
 
     <div style={containerStyle}>
@@ -66,10 +66,10 @@ export default function Home() {
       <NavBar></NavBar>
       <div style={mainStyle}>
           <Typography color='primary' fontWeight = 'bold' fontSize = '2rem'>
-          <div >Dev Ops Overflow</div>
+          Dev Ops Overflow
           </Typography>
           <div>
-              <img  style={circleIconStyle} src='/infinity_icon.png' height='50px'></img>
+              <Image className={'circleIcon'} src='/infinity_icon.png' height={'50px'} width={'50px'} alt={'DevOps Logo'}></Image>
           </div>
           <div>
             <div style={cardContainerStyle}>

@@ -5,9 +5,11 @@
  ***************/
 import {React, Component} from 'react';
 import Head from 'next/head'
+import { connect } from "react-redux";
 import IconButton from '@mui/material/IconButton';
 import Icon from '@mui/material/Icon';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import NavBar from '../../components/NavBar.js';
 import Link from 'next/link';
 
@@ -18,6 +20,17 @@ class Home extends Component {
     }
 
     render() {
+        const formContainerStyle = {
+            'display': 'flex',
+            'columnGap': '30px',
+            'margin': '20px'
+        }
+
+        const fullLineStyle = {
+            'width': '100%',
+            'margin':  '20px'
+        }
+
         return (
             <div>
                 <Head>
@@ -28,17 +41,30 @@ class Home extends Component {
                 </Head>
                 <NavBar/>
                 <center>
-                    <Link href="/">
+                    <Link href="/" passHref>
                         <IconButton style={{'verticalAlign': 'top', 'marginRight': '10px'}} color='primary'>
                             <Icon style={{'fontSize':'2rem'}}>home</Icon>
                         </IconButton>
                     </Link>
-                    <Typography color='primary' fontWeight = 'bold' fontSize = '2rem'>
-                    Search Page
-                    </Typography>
+
+                    <div><Button variant="contained" color='primary'>Search</Button></div>
+                    <div style={formContainerStyle}>
+                        <TextField style={fullLineStyle} label={'Search keywords'} required = {true} varient='Outlined'></TextField>
+                    </div>
+
                 </center>
             </div>
         )
     }
 }
-export default Home;
+const mapStateToProps = state => {
+    var props = {loginState: state.loginState, searchResult : state.searchResult};
+    return props;
+}
+const mapDispatchToProps = (dispatch) => {
+   return {
+    updateSearchResult: (searchResult) => dispatch({type: 'updateSearchResult', searchResult})
+   }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
+

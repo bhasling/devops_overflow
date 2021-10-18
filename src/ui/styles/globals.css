@@ -14,3 +14,12 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.circleIcon {
+  border-radius:50%;
+  background-color:#FDA9F7;
+  filter: invert(100%);
+}
+.underline {
+  text-decoration:underline;
+}

@@ -27,7 +27,7 @@ class LinkCard extends Component {
 
     render() {
         return(
-            <Link href={this.props.route ? this.props.route : ''}>
+            <Link href={this.props.route ? this.props.route : ''} passHref>
                 <Card style={{ 'width': '50%'}} 
                     elevation={this.state.hover? 12 : 3}
                     onMouseEnter={()=>this.mouseEnter()}

@@ -28,7 +28,7 @@ class Home extends Component {
                 </Head>
                 <NavBar/>
                 <center>
-                    <Link href="/">
+                    <Link href="/" passHref>
                         <IconButton style={{'verticalAlign': 'top', 'marginRight': '10px'}} color='primary'>
                             <Icon style={{'fontSize':'2rem'}}>home</Icon>
                         </IconButton>

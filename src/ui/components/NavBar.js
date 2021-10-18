@@ -29,7 +29,7 @@ const NavBar = () => {
                     Dev Ops Overflow
                 </Typography>
                 <div style={{'marginLeft': "auto"}}>
-                    <Link href='/configure'>
+                    <Link href='/configure' passHref>
                     <IconButton style={{'verticalAlign': 'top', 'marginRight': '10px', 'color': 'white'}} >
                         <Icon >settings</Icon>
                     </IconButton>

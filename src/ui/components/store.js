@@ -19,13 +19,15 @@
  }
  
  var store = createStore(storeReducer, {
-     "version": 4,
+     'version': 4,
      'loginState': {
          'loginName': null,
          'loginId': null
-     }
+     },
+     'searchResult': []
  });
  
- export default store
+ export default store;
+ 
  
  
