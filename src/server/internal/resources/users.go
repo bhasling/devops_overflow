@@ -21,7 +21,7 @@ func GetUsers(c *gin.Context) {
 }
 
 // GetUsersById locates the user whose ID value matches the id
-// parameter sent by the client, then returns that album as a response.
+// parameter sent by the client, then returns that user as a response.
 func GetUsersById(c *gin.Context) {
     id := c.Param("id")
     p, _ := c.Get("serviceProvider")

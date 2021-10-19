@@ -54,11 +54,13 @@ The tool is a microservice built with NextJS (a React library) and GO for the se
 The design of the GO web services is using the Gin-Gonic library for the web server with context using a ServiceProvider class created as part of the microservice.
 
 The ServiceProvider of the microservice provides dependency injection of services
-which are written in the GO package internal/services.
+which are written in the GO package api/internal/services.
+The service provider is configured in the main class main.go with configuration such as the
+S3 bucket name used in the environment. The configured service provider is added to
+the Gin-Gonic context by the main class with middleware.
 
-The resources (controllers) of the web services are in the GO package internal/resources.
-The resource routes configured in Gin-Gonic are configured to get services using the
-ServiceProvider and the services are configured in the main class main.go with configuration such as the AWS S3 bucket containing the application repository.
+The resources (controllers) of the web services are in the GO package api/internal/resources.
+The resources routes are registered in the class main.go.
 
 The UI uses the react MUI library to support Google Material Design components.
 This provides support for shadows, lighting, elevation and animation of
