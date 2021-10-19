@@ -1,3 +1,12 @@
+/*
+    This file is the main routine of the DevOps Overflow web server.
+    This file creates a web server listening on a configured port when run locally.
+    When installed on Lambda this creates the Lambda main routine to listen for
+    incoming requests in AWS cloud from API gateway.
+
+    In both cases the gin-gonic routes process the incoming Http requests for the
+    microservice.
+*/
 package main
 
 import (
@@ -34,6 +43,10 @@ func main() {
 	router.DELETE("/issues/:id", resources.DeleteIssueById)
     router.GET("/users", resources.GetUsers)
 	router.GET("/users/:id", resources.GetUsersById)
+    router.GET("/_next/static/chunks/pages/:page", resources.GetPageFile)
+    router.GET("/_next/static/:level2/:level3", resources.GetLevel3File)
+    router.GET("/:level1", resources.GetLevel1File)
+    router.GET("/", resources.GetIndexFile)
 
     if inLambda() {
         log.Fatal(gateway.ListenAndServe(":8080", router))

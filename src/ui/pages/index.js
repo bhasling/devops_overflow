@@ -7,7 +7,6 @@ import Head from 'next/head'
 import Typography from '@mui/material/Typography';
 import NavBar from '../components/NavBar.js';
 import LinkCard from '../components/LinkCard.js';
-import Image from 'next/image';
 
 export default function Home() {
   const cardContainerStyle = {
@@ -54,7 +53,6 @@ export default function Home() {
   }
 
   return (
-
     <div style={containerStyle}>
       <Head>
         <title>Home Page</title>
@@ -69,7 +67,7 @@ export default function Home() {
           Dev Ops Overflow
           </Typography>
           <div>
-              <Image className={'circleIcon'} src='/infinity_icon.png' height={'50px'} width={'50px'} alt={'DevOps Logo'}></Image>
+              <img className={'circleIcon'} src='/infinity_icon.png' height={'50px'} width={'50px'} alt={'DevOps Logo'}></img>
           </div>
           <div>
             <div style={cardContainerStyle}>

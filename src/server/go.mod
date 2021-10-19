@@ -6,6 +6,7 @@ require (
 	github.com/apex/gateway v1.1.2
 	github.com/aws/aws-sdk-go v1.41.1
 	github.com/gin-gonic/gin v1.7.4
+	github.com/google/uuid v1.3.0
 )
 
 require (
@@ -24,7 +25,6 @@ require (
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect

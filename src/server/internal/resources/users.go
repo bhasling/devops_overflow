@@ -1,3 +1,7 @@
+/*
+    This file is the route (controller) for /users.
+    This manages user objects for the login accounts for DevOps Overflow
+*/
 package resources
 
 import (

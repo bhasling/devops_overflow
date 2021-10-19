@@ -1,3 +1,8 @@
+/*
+    This file is the route (controller) for DevOps issues.
+    An issue is a DevOps issue submitted by a DevOps logged in user.
+    An issue may have a list oassociated answers contained with an issue.
+*/
 package resources
 
 import (
@@ -6,7 +11,7 @@ import (
     "api/internal/services"
 )
 
-// getAlbums responds with the list of all albums as JSON.
+// Returns a list of issues in response to GET /issues
 func GetIssues(c *gin.Context) {
     p, _ := c.Get("serviceProvider")
     var serviceProvider *services.ServiceProvider
@@ -16,8 +21,7 @@ func GetIssues(c *gin.Context) {
     c.IndentedJSON(http.StatusOK, issues)
 }
 
-// getAlbumByID locates the album whose ID value matches the id
-// parameter sent by the client, then returns that album as a response.
+// Returns a single issue in response to GET /issues/:issueId
 func GetIssueById(c *gin.Context) {
     id := c.Param("id")
     p, _ := c.Get("serviceProvider")
@@ -33,6 +37,7 @@ func GetIssueById(c *gin.Context) {
     }
 }
 
+// Creates a new issue in response to POST /issues
 func PostIssue(c *gin.Context) {
     var newIssue services.Issue
 
@@ -43,6 +48,7 @@ func PostIssue(c *gin.Context) {
     // Now newIssue contains the posted JSON information deserialized
 }
 
+// Updates an existing issue in response to PUT /issues
 func PutIssue(c *gin.Context) {
     var newIssue services.Issue
 
@@ -53,6 +59,7 @@ func PutIssue(c *gin.Context) {
     // Now newIssue contains the posted JSON information deserialized
 }
 
+// Deletes an existing issue by ID in reponse to DELETE /ssues/:issueId
 func DeleteIssueById(c *gin.Context) {
 
 }

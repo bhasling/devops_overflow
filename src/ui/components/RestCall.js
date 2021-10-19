@@ -11,18 +11,16 @@ class RestCall {
         this.url = null;
         this.jsonBody = null;
         this.defaultErrorMessage = "Error occurred";
-        this.noAuthorization = false;
-        this.simulation = null;
         this.resolve = null;
         this.reject = null;
     }
 
-    invoke(method, url, jsonBody, defaultErrorMessage, simulation) {
+    invoke(method, url, jsonBody, defaultErrorMessage, simulateResult) {
         this.method = method;
         this.url = url;
+        this.simulateResult = simulateResult;
         if (jsonBody) this.jsonBody = jsonBody;
         if (defaultErrorMessage) this.defaultErrorMessage = defaultErrorMessage;
-        if (simulation) this.simulation = simulation;
         var result = new Promise((resolve, reject) => {this.execute(resolve, reject)});
         return result;
     }
@@ -30,15 +28,10 @@ class RestCall {
     execute(resolve, reject) {
         this.resolve = resolve;
         this.reject = reject;
-        // If this is the local origin just simulate the response for testing
-        if (window && window.location && window.location.origin) {
-            var origin = window.location.origin;
-            if (origin == "file://" || origin.startsWith("http://localhost")) {
-                resolve(this.simulation);
-                return;
-            }
+        if (this.simulateResult) {
+            this.resolve(this.simulateResult);
+            return;
         }
-        // Otherwise, use fetch to execute the remote API call
         try {
             // Create the fetch options
             var options = {
@@ -99,13 +92,13 @@ class RestCall {
     }
 }
 
-class RestServiceFactory {
-    invoke(method, url, jsonBody, defaultErrorMessage, simulation, noAuthorization) {
+class RestCallFactory {
+    invoke(method, url, jsonBody, defaultErrorMessage, simulateResult) {
         // Create a new instance of the RestService object so this method is stateless for parallel threads
-        var restService = new RestService();
-        var result = restService.invoke(method, url, jsonBody, defaultErrorMessage, simulation, noAuthorization);
+        var restCall = new RestCall();
+        var result = restCall.invoke(method, url, jsonBody, defaultErrorMessage, simulateResult);
         return result;
     }
 }
-var instance = new RestServiceFactory();
+var instance = new RestCallFactory();
 export default instance;

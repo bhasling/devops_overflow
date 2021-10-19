@@ -1,3 +1,6 @@
+/*
+	This file is a unit test for the route (controller) for /users
+*/
 package resources
 
 import (

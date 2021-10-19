@@ -9,11 +9,13 @@ package services
 type Config struct {
 	S3BucketName	string
 	Region			string
+	StaticFolder	string
 }
 
 func NewConfig() * Config {
 	return &Config {
 		S3BucketName:	"stem-practice-demo",
 		Region:			"us-east-1",
+		StaticFolder:	"../ui/out",
 	}
 }

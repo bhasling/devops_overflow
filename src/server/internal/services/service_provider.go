@@ -58,6 +58,10 @@ type IssueService interface {
 	DeleteIssueById(issueId string) error
 }
 
+func (serviceProvider *ServiceProvider) GetConfig() *Config {
+	return serviceProvider.config
+}
+
 func (serviceProvider *ServiceProvider) getPersistedFileService() PersistedFileService {
 	if (serviceProvider.persistedFileService == nil) {
 		serviceProvider.persistedFileService = NewAwsS3Service(serviceProvider.config)
