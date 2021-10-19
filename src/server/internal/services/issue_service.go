@@ -28,7 +28,7 @@ type Issue struct {
     Title           string          `json:"title"`
     Product         string          `json:"product"`
     SubmitTime      time.Time       `json:response_time"`
-    Description     string          `json:"desciption"`
+    Description     string          `json:"description"`
     Answers	       []Answer     	`json:"answers"`
 }
 

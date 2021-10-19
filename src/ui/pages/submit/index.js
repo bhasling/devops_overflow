@@ -9,18 +9,75 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Icon from '@mui/material/Icon';
 import RestCall from '../../components/RestCall.js';
-
+import Typography from '@mui/material/Typography';
 import NavBar from '../../components/NavBar.js';
 import Link from 'next/link';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 
-class Home extends Component {
+class SubmitPage extends Component {
     constructor(props) {
          super();
          this.props = props;
+         this.state = {
+             product: "",
+             title: "",
+             description: "",
+             errorMessage: ""
+
+         }
     }
 
+    changeProduct(event) {
+        this.setState({product: event.target.value})
+    }
+    changeTitle(event) {
+        this.setState({title: event.target.value})
+    }
+    changeDescription(event) {
+        this.setState({description: event.target.value})
+    }
+    clearMessage() {
+        this.setState({errorMessage: ""});
+    }
+
+    clickSubmit() {
+        var message = "";
+        if (this.state.title == "") {
+            message = message + "Title is required. "
+        }
+        if (this.state.product == "") {
+            message = message + "Product is required. "
+        }
+        if (this.state.description == "") {
+            message = message + "Description is required. "
+        }
+        this.setState({errorMessage: message});
+        if (message == "") {
+            // No errors so submit the new issue
+            var url = `./issues`;
+            var body = {
+                title: this.state.title,
+                product: this.state.product,
+                description: this.state.description
+            }
+            RestCall.invoke("POST", url , body, "Unable to submit issue.", this.simulateSubmit())
+            .then (
+                (response) => this.getIssuesResponse(response),
+                (message) => this.errorResponse(message));
+            }
+    }
+
+    getIssuesResponse(response) {
+        var message = `Submitted new issue.`
+        this.setState({errorMessage: message});
+    }
+
+    errorResponse(message) {
+        this.setState({errorMessage: message})
+    }
+
+    
     render() {
         const formContainerStyle = {
             'display': 'flex',
@@ -63,23 +120,62 @@ class Home extends Component {
                             <Icon style={{'fontSize':'2rem'}}>home</Icon>
                         </IconButton>
                     </Link>
-                    <div><Button variant="contained" color='primary'>Submit New Issue</Button></div>
+                    <div>
+                        <Button onClick={()=>this.clickSubmit()} variant="contained" color='primary'>
+                                    Submit New Issue
+                        </Button>
+                    </div>
+                    <div onClick={()=>this.clearMessage()}>
+                        <Typography fontWeight = 'bold' fontSize='1.5rem' color='secondary'>
+                            {this.state.errorMessage}
+                        </Typography>
+                    </div>
                     <div style={formContainerStyle}>
-                        <TextField  style={formEntryStyle} label={'Issue Name'} required = {true} varient='Outlined'></TextField>
-                        <TextField  style={formEntryStyle} label={'Product'} select required={true} varient='Outlined'>
-                            {products.map((option) => (
-                                <MenuItem key={option.value}>
-                                    {option.label}
+                        <TextField  style={formEntryStyle} 
+                                    label={'Issue Title'}
+                                    onChange={(event)=>this.changeTitle(event)}
+                                    required = {true} 
+                                    varient='Outlined'></TextField>
+                        <TextField  style={formEntryStyle}
+                                    label={'Product'}
+                                    select 
+                                    required={true} 
+                                    varient='Outlined'
+                                    onChange={(event)=>this.changeProduct(event)}
+                                    value={this.state.product}>
+                            {products.map((product) => (
+                                <MenuItem key={product.value} value={product.label}>
+                                    {product.label}
                                 </MenuItem>
                             ))}
                         </TextField>
                     </div>
                     <div style={formContainerStyle}>
-                        <TextField style={fullLineStyle} label={'Issue Description'} required={true} multiline={true} minRows={2}  varient='Outlined'></TextField>
+                        <TextField style={fullLineStyle} 
+                                   label={'Issue Description'} 
+                                   required={true} 
+                                   onChange={(event)=>this.changeDescription(event)}
+                                   multiline={true} 
+                                   minRows={2}  
+                                   varient='Outlined'></TextField>
                     </div>
                 </center>
             </div>
         )
     }
+
+    simulateSubmit() {
+        var result = null;
+        if (process.env.NODE_ENV == "development") {
+            var jsonString = `
+            {
+                "message": "Submitted"
+            }
+            `;
+            result = JSON.parse(jsonString);
+        }
+        return result;
+    }
+
 }
-export default Home;
+export default SubmitPage;

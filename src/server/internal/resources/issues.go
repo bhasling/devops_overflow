@@ -39,13 +39,24 @@ func GetIssueById(c *gin.Context) {
 
 // Creates a new issue in response to POST /issues
 func PostIssue(c *gin.Context) {
-    var newIssue services.Issue
-
-    if err := c.BindJSON(&newIssue); err != nil {
+    var postedIssue services.Issue
+    err := c.BindJSON(&postedIssue);
+    if err != nil {
         return
     }
-
-    // Now newIssue contains the posted JSON information deserialized
+    p, _ := c.Get("serviceProvider")
+    var serviceProvider *services.ServiceProvider
+    serviceProvider = p.(*services.ServiceProvider)
+    issueService := serviceProvider.GetIssueService()
+    newIssue, _ := issueService.CreateIssue()
+    newIssue.Title = postedIssue.Title
+    newIssue.Description = postedIssue.Description
+    newIssue.Product = postedIssue.Product
+    err = issueService.SaveIssue(newIssue)
+    if (err != nil) {
+        c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Unable to create new issue."})       
+    }
+    c.IndentedJSON(http.StatusOK, gin.H{"message": "Submitted issue."})
 }
 
 // Updates an existing issue in response to PUT /issues

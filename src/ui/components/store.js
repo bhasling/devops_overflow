@@ -13,6 +13,11 @@
                 ...state,
                 loginState : action.loginState
             }
+        case 'updateSearchResult':
+                return {
+                    ...state,
+                    searchResult : action.searchResult
+                }
         default:
             return state;
      }

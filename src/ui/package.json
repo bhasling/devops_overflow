@@ -1,5 +1,5 @@
 {
-  "name": "next_demo",
+  "name": "devops_overflow",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
     "export": "next export",
     "lint": "next lint"
   },
-   "dependencies": {
+  "devDependencies": {
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@mui/material": "^5.0.3",
@@ -27,9 +27,7 @@
     "react-redux": "^7.2.4",
     "react-uuid": "^1.0.2",
     "redux": "^4.1.1",
-    "url-loader": "^4.1.1"
-  },
-  "devDependencies": {
+    "url-loader": "^4.1.1",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2"
   }
