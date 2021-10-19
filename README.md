@@ -8,6 +8,8 @@ issues associated with product. You can perform searches of previous submitted i
 keywords found in the submitted issue. You can add multiple answers to issues similar to
 Stack Overflow.
 
+The microservice is implemented in GO on server side and NextJS (react) on the UI side.
+
 The home page is shown below running locally in a development environment.
 
 ![alt text](home_page.png "Title")
