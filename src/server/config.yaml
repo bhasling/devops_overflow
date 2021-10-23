@@ -1,0 +1,4 @@
+S3BucketName: devops-overflow-bucket
+Region: us-east-1
+StaticFolder: ../ui/out
+

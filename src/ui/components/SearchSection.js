@@ -32,7 +32,7 @@ class SearchSection extends Component {
     }
 
     clickSearch() {
-        var url = `./issues`;
+        var url = `./api/issues`;
         RestCall.invoke("GET", url , null, "Unable to load issues.", this.simulateSearch())
         .then (
             (response) => this.getIssuesResponse(response),

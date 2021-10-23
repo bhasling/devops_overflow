@@ -1,12 +1,15 @@
 /*
 	This file is a resource (controller) to support the root paths to return
 	the nextjs (react) static UI files to the browser.
+
+	This is not used when running on Lambda since there is a CloudFront CDN that views 
+	the static HTML instead. But this is used when running locally.
 */
 package resources
 
 import (
 	"github.com/gin-gonic/gin"
-    "api/internal/services"
+    "main/internal/services"
 	"fmt"
 )
 

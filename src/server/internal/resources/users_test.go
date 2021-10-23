@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"io/ioutil"
 	"encoding/json"
-	"api/internal/services"
+	"main/internal/services"
 )
 
 func TestGetOneUser(t *testing.T) {

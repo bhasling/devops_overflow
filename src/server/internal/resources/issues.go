@@ -8,16 +8,19 @@ package resources
 import (
     "net/http"
 	"github.com/gin-gonic/gin"
-    "api/internal/services"
+    "main/internal/services"
+    "log"
 )
 
 // Returns a list of issues in response to GET /issues
 func GetIssues(c *gin.Context) {
+    log.Println("Called resource GetIssues")
     p, _ := c.Get("serviceProvider")
     var serviceProvider *services.ServiceProvider
     serviceProvider = p.(*services.ServiceProvider)
     issueService := serviceProvider.GetIssueService()
     issues, _ := issueService.GetAllIssues()
+    log.Printf("Returned %d records", len(issues))
     c.IndentedJSON(http.StatusOK, issues)
 }
 

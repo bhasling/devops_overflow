@@ -1,5 +1,5 @@
 /*
-	Unit test or the user service.
+	Unit test of the user service.
 */
 package services
 

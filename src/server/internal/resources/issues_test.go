@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http/httptest"
 	"io/ioutil"
-	"api/internal/services"
+	"main/internal/services"
 	"fmt"
 )
 func TestGetAll(t *testing.T) {

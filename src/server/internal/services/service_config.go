@@ -6,10 +6,16 @@
 */
 package services
 
+import (
+	"log"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+)
+
 type Config struct {
-	S3BucketName	string
-	Region			string
-	StaticFolder	string
+	S3BucketName	string 	`yaml:"S3BucketName"`
+	Region			string 	`yaml:"region"`
+	StaticFolder	string 	`yaml:"StaticFolder"`
 }
 
 func NewConfig() * Config {
@@ -18,4 +24,18 @@ func NewConfig() * Config {
 		Region:			"us-east-1",
 		StaticFolder:	"../ui/out",
 	}
+}
+
+func (config *Config) LoadConfig(fileName string) error {
+	yamlFile, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		log.Printf("Error loading config file: %v ", err)
+		return err
+	}
+	err = yaml.Unmarshal(yamlFile, config)
+	if err != nil {
+		log.Printf("Error parsing config file: %v", err)
+		return err
+	}
+	return nil
 }

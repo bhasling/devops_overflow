@@ -1,0 +1,28 @@
+##################
+# create_bucket.yaml
+#
+# This is an AWS CloudFormation template to create the S3 bucket
+# to hold persisted data for the application. This is a seperate
+# cloud formation stack so you can uninstall the application without
+# losing the data in the S3 bucket that can be uninstalled seperately.
+#
+# You must remove all data in the S3 bucket before deleting the
+# cloud formation stack that will remove the S3 bucket.
+#     aws s3 rm s3://devops-overflow-bucket --recursive
+#
+##################
+Parameters:
+    HtmlBucket:
+        Type: String
+        Default: 'devops-overflow-bucket'   
+Resources:
+  # Create S3 Bucket using a bucket name passed as a parameter
+  DevOpsHtmlBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${HtmlBucket}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true

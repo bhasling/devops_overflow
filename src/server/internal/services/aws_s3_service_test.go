@@ -1,5 +1,5 @@
 /*
-	Unit test or the AWSS3Service.
+	Unit test orfthe AWSS3Service.
 */
 package services
 
@@ -9,7 +9,7 @@ import (
 func TestS3ReadFolder(t *testing.T) {
 	var config = NewConfig()
 	var providerService = NewServiceProvider(config)
-	var fileService = providerService.getPersistedFileService()
+	var fileService = providerService.GetPersistedFileService()
 
 	var key string
 	key = "tasks/"

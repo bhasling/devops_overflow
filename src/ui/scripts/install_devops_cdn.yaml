@@ -1,0 +1,212 @@
+##################
+# install_devops_cdn.yaml
+#
+# This is an AWS CloudFormation template to install the CDN for DevOps Overflow
+# This stack assumes an S3 bucket has already been created and passed as a parameter.
+#
+# The CloudFormation Stack creates:
+#   1. A lambda function containing the GO web server
+#   2. An API Gateway exposing the lambda as HTTP
+#   3. A CloudFront distribution to provide:
+#        * HTTP access to the static files in S3 bucket.
+#        * HTTP access to the /api/xxx rest API  
+#
+# The cloudFront distribution contains a URL that you can lookup with the AWS console.
+# Browse to <url> to use DevOpsOverflow.
+#
+# To clean up you must first disable the CloudFront distribution with AWS console.
+# Then you must wait 5 minutes for the disable to complete.
+#
+# You must also use the AWS console to delete the CloudFront distribution
+# and then the delete the Origin Access Identity under the Security Tab in AWS CloudFront console.
+#
+# Then you can delete the stack with the console which will delete everything else except the S3 bucket.
+##################
+Parameters:
+  HtmlBucket:
+     Type: String
+     Default: 'devops-overflow-bucket'
+  LambdaFunctionName:
+      Type: String 
+      Default: 'devops-overflow-lambda'
+
+Resources:
+  OAIUser:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: "DevOps CloudFound OAI User"
+
+  # Create a role for the Lambda function
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+            }
+        ]
+      }
+      Policies:
+        - PolicyName: 'devops-lambda-role-policy'
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource: !Sub "arn:aws:s3:::${HtmlBucket}"
+
+  # Allow CloudFront and lambda to use the S3 bucket
+  DevOpsHtmlBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    DependsOn: ["OAIUser", "LambdaRole"]
+    Properties:
+      Bucket: !Sub '${HtmlBucket}'
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt: [ OAIUser , S3CanonicalUserId ]
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${HtmlBucket}/*"
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub '${LambdaRole.Arn}'
+            Action: "s3:*"
+            Resource: !Sub "arn:aws:s3:::${HtmlBucket}/*"
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: ["LambdaRole"]
+    Properties:
+      Description: API Lambda function
+      MemorySize: 512
+      Role: !Sub "${LambdaRole.Arn}"
+      Timeout: 60
+      FunctionName: !Sub '${LambdaFunctionName}'
+      Code:
+        S3Bucket: !Sub '${HtmlBucket}'
+        S3Key: "lambda_function.zip"
+      Handler: main
+      Runtime: go1.x
+
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Name: 'devops-api-gateway'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ProxyResource:
+    Type: 'AWS::ApiGateway::Resource'
+    DependsOn: ApiGatewayRestApi
+    Properties:
+        RestApiId: !Ref ApiGatewayRestApi
+        ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+        PathPart: '{proxy+}'
+
+  ProxyResourceANY:
+    Type: 'AWS::ApiGateway::Method'
+    DependsOn: ProxyResource
+    Properties:
+      RestApiId: !Ref ApiGatewayRestApi
+      ResourceId: !Ref ProxyResource
+      HttpMethod: "ANY"
+      AuthorizationType: "NONE"
+      Integration:
+        Type: AWS_PROXY
+        # Note This must be POST in the Integration (the console does this magically)
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}/invocations'
+
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiGatewayDeployment
+      Description: "DevOps Overflow Stage"
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: 'api'
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ProxyResourceANY
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref ApiGatewayRestApi
+
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: LambdaFunction
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      Principal: 'apigateway.amazonaws.com'
+      FunctionName: !Sub '${LambdaFunctionName}'
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRestApi}/*/*/*'
+
+  # Create a CloudFront distribution to view the bucket
+  CloudFront:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: ["DevOpsHtmlBucketPolicy", "ApiGatewayRestApi"]
+    Properties:
+      Id: devops_cloudfront
+      DistributionConfig:
+        Origins:
+          # First origin contains the Api Gateway/Lambda for the REST services
+          - Id: APIGOrigin
+            DomainName: !Sub "${ApiGatewayRestApi}.execute-api.us-east-1.amazonaws.com"
+            OriginPath: "/api"
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: 'https-only'
+          # Second origin contains the static files in S3
+          - Id: "devops_static_files"
+            DomainName: !Sub '${HtmlBucket}.s3.amazonaws.com'
+            S3OriginConfig:
+              OriginAccessIdentity:                
+                Fn::Join:
+                  - "/"
+                  - - origin-access-identity
+                    - cloudfront
+                    - Ref: OAIUser
+
+        DefaultRootObject: 'index.html'
+        Enabled: 'true'
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: 'false'
+            Cookies:
+              Forward: none
+          TargetOriginId: devops_static_files
+          ViewerProtocolPolicy: allow-all
+
+        CacheBehaviors:
+          - PathPattern: "/api/*"
+            TargetOriginId: "APIGOrigin"
+            AllowedMethods:
+              - HEAD
+              - DELETE
+              - POST
+              - GET
+              - OPTIONS
+              - PUT
+              - PATCH
+            ForwardedValues:
+              QueryString: 'true'
+              Cookies:
+                Forward: "all"
+            DefaultTTL: 0
+            MinTTL: 0
+            MaxTTL: 0
+            ViewerProtocolPolicy: allow-all
+            

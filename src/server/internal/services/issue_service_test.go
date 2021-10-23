@@ -1,5 +1,5 @@
 /*
-	Unit test or the AWSS3Service.
+	Unit test of the AWSS3Service.
 */
 package services
 

@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"time"
 	"github.com/google/uuid"
+	"log"
 )
 
 type IssueServiceImpl struct {
@@ -45,10 +46,11 @@ func NewIssueService(persistedFileService PersistedFileService) * IssueServiceIm
 }
 
 func (s *IssueServiceImpl ) GetAllIssues() ([]Issue, error) {
-	var result []Issue
+	result := make([]Issue, 0)
 	keys, err := s.persistedFileService.GetFolders("issues/")
 	if err != nil {
-		return make([]Issue, 0), err
+		log.Println(err)
+		return result, err
 	}
 	for _, key := range keys {
 		content, _ := s.persistedFileService.GetFile(key)
@@ -105,6 +107,7 @@ func (s *IssueServiceImpl ) SaveIssue(issue *Issue) error {
 	var key = fmt.Sprintf("issues/%s", issue.IssueId)
 	err := s.persistedFileService.WriteFile(key, string(content))
 	if err != nil {
+		log.Printf("Unable to save issue '%s': %v", key, err)
 		return err
 	}
 	return nil
@@ -114,6 +117,7 @@ func (s *IssueServiceImpl ) GetIssueById(issueId string) (*Issue, error) {
 	var key = fmt.Sprintf("issues/%s", issueId)
 	content, err := s.persistedFileService.GetFile(key)
 	if (err != nil) {
+		log.Println(err)
 		return nil, err
 	}
 	issue := &Issue{}
@@ -125,6 +129,7 @@ func (s *IssueServiceImpl ) DeleteIssueById(issueId string) error {
 	var key = fmt.Sprintf("issues/%s", issueId)
 	err := s.persistedFileService.DeleteFile(key)
 	if (err != nil) {
+		log.Println(err)
 		return err
 	}
 	return nil

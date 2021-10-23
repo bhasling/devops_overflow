@@ -7,7 +7,7 @@ package resources
 import (
     "net/http"
 	"github.com/gin-gonic/gin"
-    "api/internal/services"
+    "main/internal/services"
 )
 
 // getUsers responds with the list of all users as JSON.

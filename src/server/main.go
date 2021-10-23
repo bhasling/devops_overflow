@@ -1,18 +1,17 @@
 /*
     This file is the main routine of the DevOps Overflow web server.
-    This file creates a web server listening on a configured port when run locally.
+    This file creates a web server listening on port 8080 when run locally.
     When installed on Lambda this creates the Lambda main routine to listen for
     incoming requests in AWS cloud from API gateway.
 
-    In both cases the gin-gonic routes process the incoming Http requests for the
-    microservice.
+    In both cases the gin-gonic routes process the incoming Http requests.
 */
 package main
 
 import (
     "github.com/gin-gonic/gin"
-    "api/internal/resources"
-    "api/internal/services"
+    "main/internal/resources"
+    "main/internal/services"
     "net/http"
     "log"
     "github.com/apex/gateway"
@@ -20,29 +19,39 @@ import (
 )
 
 func inLambda() bool {
-    if lambdaTaskRoot := os.Getenv("LAMBDA_TASK_ROOT"); lambdaTaskRoot != "" {
-       return true
+    lambdaTaskRoot := os.Getenv("LAMBDA_TASK_ROOT")
+    if lambdaTaskRoot != "" {
+        return true
+    } else {
+        return false
     }
-    return false
  }
 
- var config = services.NewConfig()
- var providerService = services.NewServiceProvider(config)
-
-func ProviderServiceMiddleware(c *gin.Context) {
-    c.Set("serviceProvider", providerService)
-    c.Next()
-}
 func main() {
+    config := services.NewConfig()
+    err := config.LoadConfig("./config.yaml")
+    if err != nil {
+        log.Println(err)
+        log.Fatal("Unable to read configuration file.")
+    }
+    if inLambda() {
+        config.StaticFolder = "."
+    } else {
+        config.StaticFolder = "../ui/out"
+    }
+    serviceProvider := services.NewServiceProvider(config)
     router := gin.Default()
-    router.Use(ProviderServiceMiddleware)
-    router.GET("/issues", resources.GetIssues)
-	router.GET("/issues/:id", resources.GetIssueById)
-    router.POST("/issues", resources.PostIssue)
-    router.PUT("/issues", resources.PutIssue)
-	router.DELETE("/issues/:id", resources.DeleteIssueById)
-    router.GET("/users", resources.GetUsers)
-	router.GET("/users/:id", resources.GetUsersById)
+    router.Use(func(c *gin.Context) {
+        c.Set("serviceProvider", serviceProvider)
+        })
+
+    router.GET("/api/issues", resources.GetIssues)
+	router.GET("/api/issues/:id", resources.GetIssueById)
+    router.POST("/api/issues", resources.PostIssue)
+    router.PUT("/api/issues", resources.PutIssue)
+	router.DELETE("/api/issues/:id", resources.DeleteIssueById)
+    router.GET("/api/users", resources.GetUsers)
+	router.GET("/api/users/:id", resources.GetUsersById)
     router.GET("/_next/static/chunks/pages/:page", resources.GetPageFile)
     router.GET("/_next/static/:level2/:level3", resources.GetLevel3File)
     router.GET("/:level1", resources.GetLevel1File)

@@ -7,6 +7,7 @@ package services
 import (
 	"fmt"
 	"encoding/json"
+	"log"
 )
 
 type UserServiceImpl struct {
@@ -24,10 +25,11 @@ func NewUserService(persistedFileService PersistedFileService) * UserServiceImpl
 }
 
 func (s *UserServiceImpl ) GetAllUsers() ([]User, error) {
-	var result []User
+	result := make([]User, 0)
 	keys, err := s.persistedFileService.GetFolders("users/")
 	if err != nil {
-		return make([]User, 0), err
+		log.Println(err)
+		return result, err
 	}
 	for _, key := range keys {
 		content, _ := s.persistedFileService.GetFile(key)
@@ -48,6 +50,7 @@ func (s *UserServiceImpl ) SaveUser(user *User) error {
 	var key = fmt.Sprintf("users/%s", user.UserId)
 	err := s.persistedFileService.WriteFile(key, string(content))
 	if err != nil {
+		log.Printf("Unable to save user '%s': %v", key, err)
 		return err
 	}
 	return nil
@@ -56,6 +59,7 @@ func (s *UserServiceImpl ) GetUserById(userId string) (*User, error) {
 	var key = fmt.Sprintf("users/%s", userId)
 	content, err := s.persistedFileService.GetFile(key)
 	if (err != nil) {
+		log.Println(err)
 		return nil, err
 	}
 	user := &User{}
@@ -67,6 +71,7 @@ func (s *UserServiceImpl ) DeleteUserById(userId string) error {
 	var key = fmt.Sprintf("users/%s", userId)
 	err := s.persistedFileService.DeleteFile(key)
 	if (err != nil) {
+		log.Println(err)
 		return err
 	}
 	return nil

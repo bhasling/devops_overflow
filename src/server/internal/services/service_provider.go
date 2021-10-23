@@ -34,6 +34,7 @@ type ServiceProvider struct {
 type PersistedFileService interface {
 	GetFolders(key string) ([]string, error)
 	GetFile(key string) (string, error)
+	GetBinaryFile(key string) ([]byte, error)
 	WriteFile(key string, value string) error
 	DeleteFile(key string) error
 }
@@ -62,7 +63,7 @@ func (serviceProvider *ServiceProvider) GetConfig() *Config {
 	return serviceProvider.config
 }
 
-func (serviceProvider *ServiceProvider) getPersistedFileService() PersistedFileService {
+func (serviceProvider *ServiceProvider) GetPersistedFileService() PersistedFileService {
 	if (serviceProvider.persistedFileService == nil) {
 		serviceProvider.persistedFileService = NewAwsS3Service(serviceProvider.config)
 	}
@@ -71,14 +72,14 @@ func (serviceProvider *ServiceProvider) getPersistedFileService() PersistedFileS
 
 func (serviceProvider *ServiceProvider) GetUserService() UserService {
 	if (serviceProvider.userService == nil) {
-		serviceProvider.userService = NewUserService(serviceProvider.getPersistedFileService())
+		serviceProvider.userService = NewUserService(serviceProvider.GetPersistedFileService())
 	}
 	return serviceProvider.userService
 }
 
 func (serviceProvider *ServiceProvider) GetIssueService() IssueService {
 	if (serviceProvider.issueService == nil) {
-		serviceProvider.issueService = NewIssueService(serviceProvider.getPersistedFileService())
+		serviceProvider.issueService = NewIssueService(serviceProvider.GetPersistedFileService())
 	}
 	return serviceProvider.issueService
 }

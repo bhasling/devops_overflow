@@ -55,7 +55,7 @@ class SubmitPage extends Component {
         this.setState({errorMessage: message});
         if (message == "") {
             // No errors so submit the new issue
-            var url = `./issues`;
+            var url = `./api/issues`;
             var body = {
                 title: this.state.title,
                 product: this.state.product,
