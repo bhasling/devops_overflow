@@ -19,6 +19,7 @@ The following are prerequisites to build devops_overflow
 1. Install nodejs
 2. Install Yarn (or NPM that comes with node).
 3. Install golang (https://golang.org/doc/install)
+4. AWS CLI Version 2 for AWS installation (https://aws.amazon.com/cli)
 
 # Install
 After cloning the repository to a local directory perform the following.
@@ -44,10 +45,24 @@ This uses nextjs to view the react source files locally without a web server.
 The GO application server can be run locally from the src/server folder by executing:
 
     go run .
-While running the server locally you can browse to https://localhost:8080/index.html
-By default this is configured to run the server connected to a test S3 repository in AWS.
+While running the server locally you can browse to https://localhost:8080
 
-The code supports running in AWS with lambda, but installation instructions are TBD.
+The web server will try to read and write to the S3 bucket configured in the config.yaml file.
+Without an S3 bucket submitting and searching functions will not work. You can create the
+S3 bucket by installing the application into the AWS cloud.
+
+# Installing into the AWS Cloud
+DevOps Overflow can be installed in the AWS cloud by executing this command from the src/ui folder.
+
+    yarn run create_bucket
+
+This will create an S3 bucket named devops-overflow-bucket using an AWS cloud formation template.
+After the bucket is created when you run the server locally the bucket will be available to 
+save and search content. Also, after the bucket is created you can also execute the command.
+
+    yarn run install_cdn
+
+This runs a different cloud formation template to create an Api Gateway and Lambda function for the REST services. It also copies the static HTML files to the S3 bucket and creates a Cloud Front CDN to expose the REST services and the static HTML under a single URL end point. After the install is complate use the AWS console to find the Cloud Front distribution object to get the URL of the end point.
 
 # Design
 The tool is a microservice built with NextJS (a React library) and GO for the server.
