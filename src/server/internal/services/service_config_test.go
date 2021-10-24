@@ -1,20 +1,16 @@
 /*
 	Unit test of the service_config.
+	This uses test helper methods found in services_test_helper_test.go
 */
 package services
 
 import (
 	"testing"
 )
-func TestConfig(t *testing.T) {
+func TestShouldReadConfig(t *testing.T) {
+	// For this test the code reads the default configuration in the top level application folder
 	config := NewConfig()
 	err := config.LoadConfig("../../config.yaml")
-	if (err != nil) {
-		t.Errorf("Unable to read configuration file.")
-		return
-	}
-	if (config.Region != "us-east-1") {
-		t.Errorf("Expected region read from config file")
-		return
-	}
+	ExpectNoError(t, err)
+	ExpectEquals(t, config.Region, "us-east-1")
 }

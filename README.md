@@ -62,7 +62,7 @@ save and search content. Also, after the bucket is created you can also execute 
 
     yarn run install_cdn
 
-This runs a different cloud formation template to create an Api Gateway and Lambda function for the REST services. It also copies the static HTML files to the S3 bucket and creates a Cloud Front CDN to expose the REST services and the static HTML under a single URL end point. After the install is complate use the AWS console to find the Cloud Front distribution object to get the URL of the end point.
+This runs a different cloud formation template to create an Api Gateway and Lambda function for the REST services. It also copies the static HTML files to the S3 bucket and creates a Cloud Front CDN to expose the REST services and the static HTML under a single URL end point. After the install is complete use the AWS console to find the Cloud Front distribution object to get the URL of the end point.
 
 # Design
 The tool is a microservice built with NextJS (a React library) and GO for the server.

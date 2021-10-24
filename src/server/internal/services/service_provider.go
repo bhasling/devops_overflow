@@ -63,6 +63,10 @@ func (serviceProvider *ServiceProvider) GetConfig() *Config {
 	return serviceProvider.config
 }
 
+func (serviceProvider *ServiceProvider) SetPersistedFileService(persistedFileService PersistedFileService) {
+		serviceProvider.persistedFileService = persistedFileService
+}
+
 func (serviceProvider *ServiceProvider) GetPersistedFileService() PersistedFileService {
 	if (serviceProvider.persistedFileService == nil) {
 		serviceProvider.persistedFileService = NewAwsS3Service(serviceProvider.config)

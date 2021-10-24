@@ -20,7 +20,7 @@ type Config struct {
 
 func NewConfig() * Config {
 	return &Config {
-		S3BucketName:	"stem-practice-demo",
+		S3BucketName:	"configure_this_bucstemket_name",
 		Region:			"us-east-1",
 		StaticFolder:	"../ui/out",
 	}
