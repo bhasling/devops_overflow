@@ -8,6 +8,7 @@ import (
 	"testing"
 	"encoding/json"
 	"strings"
+	"github.com/stretchr/testify/assert"
 )
 func TestIssueHappyPath(t *testing.T) {
 	var config = NewConfig()
@@ -26,30 +27,29 @@ func TestIssueHappyPath(t *testing.T) {
 	issue,_ := issueService.CreateIssue()
 	issue.Title = "a title"
 	err := issueService.SaveIssue(issue)
-	ExpectNoError(t, err)
+	assert.Equal(t, nil, err)
 
 	// Read back the issue by the id
 	readBackIssue, _ := issueService.GetIssueById(issue.IssueId)
-	ExpectNotEquals(t, readBackIssue, nil)
-	ExpectEquals(t, readBackIssue.Title, "my title")
+	assert.Equal(t, "my title", readBackIssue.Title)
 
 	// Read back new list of issues
 	newListOfIssues, _ := issueService.GetAllIssues()
-	ExpectEquals(t, len(newListOfIssues), len(initialIssues) + 1)
+	assert.Equal(t, len(initialIssues) + 1, len(newListOfIssues))
 
 	// Create a new answer in the issue
 	answer, _ := issueService.CreateAnswer(readBackIssue)
 	answer.Description = "my answer"
 	issueService.UpdateAnswer(readBackIssue, answer)
 	content, _ := json.Marshal(readBackIssue)
-	ExpectTrue(t, strings.Contains(string(content), "my answer"), "Expected my answer in issue")
+	assert.Equal(t, true, strings.Contains(string(content), "my answer"), "Expected my answer in issue")
 
 	// Delete the new answer
 	issueService.DeleteAnswerById(issue, answer.AnswerId)
 	content, _ = json.Marshal(issue)
-	ExpectEquals(t, len(issue.Answers), 0)
+	assert.Equal(t, 0, len(issue.Answers))
 
 	// Delete the new issue
 	err = issueService.DeleteIssueById(issue.IssueId)
-	ExpectNoError(t, err)
+	assert.Equal(t, nil, err)
 }

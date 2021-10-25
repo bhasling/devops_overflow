@@ -4,54 +4,9 @@
 package resources
 
 import (
-	"testing"
-	"path/filepath"
-	"fmt"
-	"runtime"
-	"reflect"
 	"errors"
 	"main/internal/services"
 )
-
-func ExpectTrue(t *testing.T, condition bool, message string) {
-	if ! condition {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("[%s:%d] Expected true. %s\n", filepath.Base(file), line, message)
-		t.FailNow()
-	}
-}
-
-func ExpectNoError(t *testing.T, err error) {
-	if err != nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("[%s:%d] Expected no error. Got '%s'.\n", filepath.Base(file), line, err)
-		t.FailNow()
-	}
-}
-
-func ExpectError(t *testing.T, err error) {
-	if err == nil {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("[%s:%d] Expected an error.\n", filepath.Base(file), line)
-		t.FailNow()
-	}
-}
-
-func ExpectEquals(t *testing.T, act, exp interface{}) {
-	if !reflect.DeepEqual(exp, act) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("[%s:%d] Expected '%v' Got '%v'.\n", filepath.Base(file), line, exp, act)
-		t.FailNow()
-	}
-}
-
-func ExpectNotEquals(t *testing.T, act, exp interface{}) {
-	if reflect.DeepEqual(exp, act) {
-		_, file, line, _ := runtime.Caller(1)
-		fmt.Printf("[%s:%d] Expected '%v' to be not equal to '%v'.\n", filepath.Base(file), line, exp, act)
-		t.FailNow()
-	}
-}
 
 // Class to represent mocked call input/outputs to GetFile,WriteFile,or DeleteFile methods
 type MockedPersistedFileResults struct {

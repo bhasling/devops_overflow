@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"main/internal/services"
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestShouldReadAllIsses(t *testing.T) {
@@ -31,11 +32,11 @@ func TestShouldReadAllIsses(t *testing.T) {
 
 	// Verify response returned by the http request
 	b, _ := ioutil.ReadAll(w.Body)
-	ExpectEquals(t, w.Code, 200)
-	ExpectNotEquals(t, b, nil)
+	assert.Equal(t, 200, w.Code)
+	assert.NotEqual(t, nil, b)
 	var issues []services.Issue
 	json.Unmarshal(b, &issues)
-	ExpectEquals(t, len(issues), 2)
+	assert.Equal(t, 2, len(issues))
 }
 
 func TestShouldReadOneIssue(t *testing.T) {
@@ -57,9 +58,9 @@ func TestShouldReadOneIssue(t *testing.T) {
 	GetIssueById(c)
 
 	// Verify response returned by the http request
-	ExpectEquals(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	b, _ := ioutil.ReadAll(w.Body)
 	var issue services.Issue
 	json.Unmarshal(b, &issue)
-	ExpectEquals(t, issue.Title, "my title1")
+	assert.Equal(t, "my title1", issue.Title)
 }

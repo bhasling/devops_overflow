@@ -6,11 +6,12 @@ package services
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 func TestShouldReadConfig(t *testing.T) {
 	// For this test the code reads the default configuration in the top level application folder
 	config := NewConfig()
 	err := config.LoadConfig("../../config.yaml")
-	ExpectNoError(t, err)
-	ExpectEquals(t, config.Region, "us-east-1")
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "us-east-1", config.Region)
 }

@@ -6,6 +6,7 @@ package services
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 func TestShouldReadFolders(t *testing.T) {
 	// There is no mock for this test. It runs the test on the AWSS3Service with no existing S3 bucket
@@ -17,6 +18,6 @@ func TestShouldReadFolders(t *testing.T) {
 
 	var key string = "tasks/"
 	keys, err := fileService.GetFolders(key)
-	ExpectError(t, err)
-	ExpectEquals(t, len(keys), 0)
+	assert.NotEqual(t, nil, err)
+	assert.Equal(t, 0, len(keys))
 }

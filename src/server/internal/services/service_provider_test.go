@@ -6,10 +6,11 @@ package services
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 func TestServiceProviderHappyPath(t *testing.T) {
 	var config = NewConfig()
 	serviceProvider := NewServiceProvider(config)
 	issueService := serviceProvider.GetIssueService()
-	ExpectNotEquals(t, issueService, nil)
+	assert.NotEqual(t, nil, issueService)
 }

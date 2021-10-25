@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"main/internal/services"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUserHappyPath(t *testing.T) {
@@ -32,9 +33,9 @@ func TestUserHappyPath(t *testing.T) {
 	GetUsersById(c)
 
 	// Verify response
-	ExpectEquals(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	b, _ := ioutil.ReadAll(w.Body)
 	var u services.User
 	json.Unmarshal(b, &u)
-	ExpectEquals(t, u.Password, "user1pw")
+	assert.Equal(t, "user1pw", u.Password)
 }

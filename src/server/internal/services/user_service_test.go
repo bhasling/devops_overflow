@@ -6,6 +6,8 @@ package services
 
 import (
 	"testing"
+	"github.com/stretchr/testify/assert"
+
 )
 func TestUserHappyPath(t *testing.T) {
 	var config = NewConfig()
@@ -22,20 +24,20 @@ func TestUserHappyPath(t *testing.T) {
 
 	// Test Create user
 	user,_ := userService.CreateUser("1")
-	ExpectEquals(t, user.UserId, "1")
+	assert.Equal(t, "1", user.UserId)
 
 	// Test add password to user and save it
 	user.Password = "my password"
 	err := userService.SaveUser(user)
-	ExpectNoError(t, err)
+	assert.Equal(t, nil, err)
 	users, _ := userService.GetAllUsers()
-	ExpectEquals(t, len(users), len(initialUsers) + 1)
+	assert.Equal(t, len(initialUsers) + 1, len(users))
 
 	// Test read back user
 	readBackUser, _ := userService.GetUserById(user.UserId)
-	ExpectEquals(t, readBackUser.Password, user.Password)
+	assert.Equal(t, user.Password, readBackUser.Password)
 
 	// Delete new user
 	err = userService.DeleteUserById("1")
-	ExpectNoError(t, err)
+	assert.Equal(t, nil, err)
 }
