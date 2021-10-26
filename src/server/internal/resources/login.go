@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
     "main/internal/services"
     "fmt"
-    "github.com/dgrijalva/jwt-go"
+    "github.com/golang-jwt/jwt"
     "time"
     "log"
 )
 
-// Post a message to sign up a new user
+// Post a message to authenticate and login a user
 // If successful return json {"user_id": "username"} and a session cookie with a JWT token.
 func PostLogin(c *gin.Context) {
     var postedUser services.User
@@ -52,6 +52,7 @@ func PostLogin(c *gin.Context) {
     // Return the user object as the result
     c.IndentedJSON(http.StatusOK, existingUser)
 
+    // Return an Authentication cookie with the JWT token
     http.SetCookie(c.Writer, &http.Cookie {
         Name: "Authentication",
         Value: fmt.Sprintf("Bearer %s", jwtToken),
