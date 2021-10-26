@@ -1,6 +1,6 @@
 /*
-    This file is the route (controller) for /users.
-    This manages user objects for the login accounts for DevOps Overflow
+    This file is the route (controller) for /signup.
+    This supports a sign up request from the UI.
 */
 package resources
 
@@ -32,16 +32,22 @@ func PostSignup(c *gin.Context) {
     var serviceProvider *services.ServiceProvider
     serviceProvider = p.(*services.ServiceProvider)
     userService := serviceProvider.GetUserService()
+
+    // Check if this user already exists
     existingUser, _ := userService.GetUserById(postedUser.UserId)
     if existingUser != nil {
         c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("User '%s' already exists.", postedUser.UserId)})
         return
     }
+
+    // If user does not exist then create the user with the user ID and password
     user, _ := userService.CreateUser(postedUser.UserId)
     user.Password = postedUser.Password
     err = userService.SaveUser(user)
     if err != nil {
         c.IndentedJSON(http.StatusBadRequest, gin.H{"message": fmt.Sprintf("Unable to create user '%s'.", postedUser.UserId)})
     }
+
+    // Return the user object as the result
     c.IndentedJSON(http.StatusOK, user)
 }

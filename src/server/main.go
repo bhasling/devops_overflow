@@ -52,6 +52,8 @@ func main() {
 	router.DELETE("/api/issues/:id", resources.DeleteIssueById)
     router.GET("/api/users", resources.GetUsers)
 	router.GET("/api/users/:id", resources.GetUsersById)
+    router.POST("/api/signup", resources.PostSignup)
+    router.POST("/api/login", resources.PostLogin)
     router.GET("/_next/static/chunks/pages/:page", resources.GetPageFile)
     router.GET("/_next/static/:level2/:level3", resources.GetLevel3File)
     router.GET("/:level1", resources.GetLevel1File)

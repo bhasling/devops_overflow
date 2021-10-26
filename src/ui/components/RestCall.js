@@ -29,7 +29,11 @@ class RestCall {
         this.resolve = resolve;
         this.reject = reject;
         if (this.simulateResult) {
-            this.resolve(this.simulateResult);
+            if (this.simulateResult.status == "error") {
+                this.reject(this.simulateResult)
+            } else {
+                this.resolve(this.simulateResult);
+            }
             return;
         }
         try {

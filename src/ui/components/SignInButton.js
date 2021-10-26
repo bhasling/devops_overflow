@@ -17,14 +17,21 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
- 
+import Typography from '@mui/material/Typography';
+import RestCall from './RestCall.js'
+
 class SignInButton extends Component {
      constructor(props) {
          super();
          this.props = props;
          this.state = {
              loginOpen: false,
-             signUpOpen: false
+             signUpOpen: false,
+             signupUser: "",
+             signupPassword: "",
+             loginUser: "",
+             loginPassword: "",
+             message: ""
          }
      }
  
@@ -76,7 +83,9 @@ class SignInButton extends Component {
                         <DialogTitle>Login</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                To login, please enter your user name nad password.
+                                <Typography fontSize='1rem'>
+                                    {this.state.message}
+                                </Typography>                               
                             </DialogContentText>
                             <TextField
                                 autoFocus
@@ -84,6 +93,7 @@ class SignInButton extends Component {
                                 id="name"
                                 label="User Id"
                                 type="string"
+                                onChange={(event)=>this.changeLoginUser(event)}
                                 fullWidth
                                 variant="standard"
                             />
@@ -92,25 +102,30 @@ class SignInButton extends Component {
                                 id="password"
                                 label="Password"
                                 type="password"
+                                onChange={(event)=>this.changeLoginPassword(event)}
                                 fullWidth
                                 variant="standard"
                             />
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={()=>this.closeLoginDialog()}>Cancel</Button>
-                            <Button onClick={()=>this.closeLoginDialog()}>Login</Button>
+                            <Button onClick={()=>this.clickLogin()}>Login</Button>
                         </DialogActions>
                     </Dialog>                
                     <Dialog open={this.state.signUpOpen} onClose={()=>this.closeSignupDialog()}>
                         <DialogTitle>Sign Up</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Enter your desired user and password to sign up.
+                            <Typography fontSize='1rem'>
+                                    {this.state.message}
+                                </Typography>                               
+                                
                             </DialogContentText>
                             <TextField
                                 autoFocus
                                 margin="dense"
                                 id="name"
+                                onChange={(event)=>this.changeSignupUser(event)}
                                 label="User Id"
                                 type="string"
                                 fullWidth
@@ -121,13 +136,14 @@ class SignInButton extends Component {
                                 id="password"
                                 label="Password"
                                 type="password"
+                                onChange={(event)=>this.changeSignupPassword(event)}
                                 fullWidth
                                 variant="standard"
                             />
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={()=>this.closeSignupDialog()}>Cancel</Button>
-                            <Button onClick={()=>this.closeSignupDialog()}>Sign Up</Button>
+                            <Button onClick={()=>this.clickSignup()}>Sign Up</Button>
                         </DialogActions>
                     </Dialog>                
 
@@ -153,39 +169,111 @@ class SignInButton extends Component {
         this.props.updateLoginState({'loginId': this.props.loginState.loginId, 'loginUser': this.props.loginState.loginUser, 'signUpOutHover': false});
     }
     clickPeople() {
-        if (this.props.loginState.loginId) {
-            this.props.updateLoginState({'loginId': null, 'loginUser': null, 'userHover': false});
-        } else {
+        if (!this.props.loginState.loginId) {
             this.showLoginDialog();
         }
     }
     showLoginDialog() {
-        this.setState({loginOpen: true});
+        this.setState({loginOpen: true, message: "To login, please enter your user name nad password."});
     }
-    closeLoginDialog() {
-        if (this.props.loginState.loginId) {
-            this.setState({loginOpen: false});
-            this.props.updateLoginState({'loginId': null, 'loginUser': null, 'userHover': false});
-        } else {
-            this.setState({loginOpen: false});
-            this.props.updateLoginState({'loginId': '2', 'loginUser': 'myusername', 'userHover': false});
+    clickLogin() {
+        var url = `./api/login`;
+        var body = {
+            user_id: this.state.login_user,
+            password: this.state.login_password
         }
+        RestCall.invoke("POST", url , body, "Unable to load issues.", this.simulateLogin())
+        .then (
+            (response) => this.loginResponse(response),
+            (message) => this.loginErrorResponse(message));
     }
+
+    loginResponse(response) {
+        this.setState({loginOpen: false, 'userHover': false});
+        this.props.updateLoginState({'loginId': response.user_id, 'loginUser': response.user_id, 'userHover': false});
+    }
+
+    loginErrorResponse(response) {
+        this.setState({message: response});
+    }
+
+    closeLoginDialog() {
+        this.setState({loginOpen: false, 'userHover': false});
+    }
+
     clickSignUpOut() {
         if (this.props.loginState.loginId) {
+            // Already logged in, so Signout
             this.props.updateLoginState({'loginId': null, 'loginUser': null, 'userHover': false});
         } else {
+            // Show sign in dialog
             this.showSignupDialog();
         }
     }
+
+    clickSignup() {
+        var url = `./api/signup`;
+        var body = {
+            user_id: this.state.signupUser,
+            password: this.state.signupPassword
+        }
+        RestCall.invoke("POST", url , body, "Unable to siginup.", this.simulateLogin())
+        .then (
+            (response) => this.signUpResponse(response),
+            (message) => this.signUpErrorResponse(message));
+    }
+
+    signUpResponse(response) {
+        this.setState({signUpOpen: false, 'userHover': false});
+        this.props.updateLoginState({'loginId': response.user_id, 'loginUser': response.user_id, 'userHover': false});
+    }
+
+    signUpErrorResponse(response) {
+        this.setState({message: response});
+    }
     showSignupDialog() {
-        this.setState({signUpOpen: true});
+        this.setState({signUpOpen: true, message: "Enter your desired user and password to sign up."});
     }
     closeSignupDialog() {
-        if (this.props.loginState.loginId) {
-        } else {
-        }
         this.setState({signUpOpen: false});
+    }
+    changeSignupUser(event) {
+        this.setState({signupUser: event.target.value})
+    }
+    changeSignupPassword(event) {
+        this.setState({signupPassword: event.target.value})
+    }
+    changeLoginUser(event) {
+        this.setState({login_user: event.target.value})
+    }
+    changeLoginPassword(event) {
+        this.setState({login_password: event.target.value})
+    }
+
+    simulateLogin() {
+        var result = null;
+        if (process.env.NODE_ENV == "development") {
+            var jsonString = `
+            {
+                "user_id": "user_1"
+            }
+            `;
+            result = JSON.parse(jsonString);
+        }
+        return result;
+    }
+
+    simulateSignup() {
+        var result = null;
+        if (process.env.NODE_ENV == "development") {
+            var jsonString = `
+            {
+                "user_id": "user_1"
+            }
+            `;
+            result = JSON.parse(jsonString);
+        }
+        return result;
     }
 
 }
