@@ -37,7 +37,14 @@ func main() {
     if inLambda() {
         config.StaticFolder = "."
     } else {
-        config.StaticFolder = "../ui/out"
+        _, err = os.Stat("./html")
+        if err == nil {
+            // Use the static files put here by docker build
+            config.StaticFolder = "./html"
+        } else {
+            // Use the static file from local development
+            config.StaticFolder = "../ui/out"
+        }
     }
     serviceProvider := services.NewServiceProvider(config)
     router := gin.Default()
