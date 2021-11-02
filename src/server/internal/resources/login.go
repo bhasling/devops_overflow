@@ -9,7 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
     "main/internal/services"
     "fmt"
-    "github.com/golang-jwt/jwt"
+    // "github.com/golang-jwt/jwt"  This library requires GO 1.22
+    "github.com/dgrijalva/jwt-go"
     "time"
     "log"
 )
