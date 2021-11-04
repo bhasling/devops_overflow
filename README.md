@@ -80,3 +80,5 @@ The resources routes are registered in the class main.go.
 The UI uses the react MUI library to support Google Material Design components.
 This provides support for shadows, lighting, elevation and animation of
 widgets.
+
+![alt text](class_diagram.png "Class Diagram")
